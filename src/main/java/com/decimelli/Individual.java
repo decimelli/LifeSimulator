@@ -1,5 +1,9 @@
 package com.decimelli;
 
+import com.decimelli.utils.Console;
+import com.decimelli.utils.CsvParser;
+import com.decimelli.utils.RandomGenerator;
+
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -15,7 +19,7 @@ public class Individual implements Runnable {
         MALE, FEMALE
     }
 
-    public static final long DEFAULT_MULTIPLIER = 219300000;
+    public static final long DEFAULT_MULTIPLIER = 60;
     public static final long DEFAULT_LOG_INTERVAL_IN_SECONDS = 1;
 
     private final Calendar birthday;
@@ -52,7 +56,9 @@ public class Individual implements Runnable {
 
     @Override
     public void run() {
-        Console.getPrinter().info("Congratulations! {0} was born on {1}", this.firstname, this.birthday.getTime());
+        Console.getPrinter().info("Congratulations! {0} {1} was born on {2}",
+                this.firstname, this.lastname, Console.getPrinter().prettyDate(this.birthday.getTimeInMillis())
+        );
         while (!dead) {
             waitOneSecond();
             this.currentDateInMillis = this.currentDateInMillis + 1000L * multiplier;
@@ -63,8 +69,8 @@ public class Individual implements Runnable {
             this.dead = RandomGenerator.testChance(chanceOfDeath);
         }
         Console.getPrinter().info(
-                "Oh no! {0} has has died on {1} at the age of {2} due to {3}.",
-                this.firstname, new Calendar.Builder().setInstant(this.currentDateInMillis).build().getTime(),
+                "Oh no! {0} {1} has has died on {2} at the age of {3} due to {4}.",
+                this.firstname, this.lastname, Console.getPrinter().prettyDate(this.currentDateInMillis),
                 this.age, CsvParser.getInstance().getDeathCause(this)
         );
     }
@@ -88,7 +94,7 @@ public class Individual implements Runnable {
 
     private void waitOneSecond() {
         try {
-            Thread.sleep(logInterval * 1000L + RandomGenerator.randomInt(1000));
+            Thread.sleep(logInterval * 1000L + RandomGenerator.random(1000));
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             System.err.println(e.getMessage());

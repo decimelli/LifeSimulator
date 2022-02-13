@@ -1,4 +1,4 @@
-package com.decimelli;
+package com.decimelli.utils;
 
 import java.util.Random;
 
@@ -14,7 +14,11 @@ public class RandomGenerator {
         return r.nextFloat() < chance;
     }
 
-    public static long randomInt(int maxValue) {
+    public static long random(int maxValue) {
         return r.nextInt(maxValue);
+    }
+
+    public static long random(int maxValue, int minValue) {
+        return r.nextInt(maxValue - 1) + minValue;
     }
 }

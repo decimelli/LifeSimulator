@@ -1,5 +1,6 @@
-package com.decimelli;
+package com.decimelli.utils;
 
+import com.decimelli.Individual;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 
