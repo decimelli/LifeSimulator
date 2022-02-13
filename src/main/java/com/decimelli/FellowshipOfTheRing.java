@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import static com.decimelli.Individual.BirthGender.MALE;
 
-public class Main {
+public class FellowshipOfTheRing {
 
     public static void main(String[] args) {
         Arrays.asList(
@@ -31,3 +31,4 @@ public class Main {
         });
     }
 }
+
