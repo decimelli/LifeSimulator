@@ -1,5 +1,6 @@
 package com.decimelli;
 
+import com.decimelli.exception.LifeException;
 import com.decimelli.utils.Console;
 import com.decimelli.utils.CsvParser;
 import com.decimelli.utils.RandomGenerator;
@@ -15,6 +16,10 @@ import static java.util.concurrent.TimeUnit.*;
 @SuppressWarnings("unused")
 public class Individual implements Runnable {
 
+    public void waitForDeath() throws InterruptedException {
+        this.thread.join(0);
+    }
+
     public enum BirthGender {
         MALE, FEMALE
     }
@@ -29,8 +34,11 @@ public class Individual implements Runnable {
     private final String lastname;
     private final BirthGender assignedGenderAtBirth;
     private long multiplier;
+    private Long deathDate;
+    private String causeOfDeath;
     private long logInterval;
     private boolean dead = false;
+    private Thread thread;
 
     private Individual(Builder builder) {
         this.birthday = Calendar.getInstance();
@@ -40,17 +48,21 @@ public class Individual implements Runnable {
         this.assignedGenderAtBirth = builder.assignedGenderAtBirth;
     }
 
-    public void beginLife(long multiplier, long logInterval) {
+    public void beginLife(long multiplier, long logInterval) throws LifeException {
         this.multiplier = multiplier;
         this.logInterval = logInterval;
-        new Thread(this).start();
+        if (multiplier > 3155695200L) {
+            throw new LifeException("Cannot live more than 100 years at a time");
+        }
+        this.thread = new Thread(this);
+        this.thread.start();
     }
 
-    public void beginLife(long multiplier) {
+    public void beginLife(long multiplier) throws LifeException {
         this.beginLife(multiplier, DEFAULT_LOG_INTERVAL_IN_SECONDS);
     }
 
-    public void beginLife() {
+    public void beginLife() throws LifeException {
         this.beginLife(DEFAULT_MULTIPLIER, DEFAULT_LOG_INTERVAL_IN_SECONDS);
     }
 
@@ -68,10 +80,12 @@ public class Individual implements Runnable {
             float chanceOfDeath = CsvParser.getInstance().getDeathProbability(this);
             this.dead = RandomGenerator.testChance(chanceOfDeath);
         }
+        this.deathDate = this.currentDateInMillis;
+        this.causeOfDeath = CsvParser.getInstance().getDeathCause(this);
         Console.getPrinter().info(
                 "Oh no! {0} {1} has has died on {2} at the age of {3} due to {4}.",
                 this.firstname, this.lastname, Console.getPrinter().prettyDate(this.currentDateInMillis),
-                this.age, CsvParser.getInstance().getDeathCause(this)
+                this.age, this.causeOfDeath
         );
     }
 
@@ -103,6 +117,26 @@ public class Individual implements Runnable {
 
     public int getAge() {
         return this.age;
+    }
+
+    public Calendar getBirthday() {
+        return birthday;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public Long getDeathDate() {
+        return deathDate;
+    }
+
+    public String getCauseOfDeath() {
+        return causeOfDeath;
     }
 
     public BirthGender getAssignedGenderAtBirth() {

@@ -36,7 +36,7 @@ public class CsvParser {
 
     public float getDeathProbability(Individual person) {
         int rowIndex = person.getAssignedGenderAtBirth() == Individual.BirthGender.MALE ? 1 : 5;
-        String[] row = deathProbability.get(person.getAge());
+        String[] row = deathProbability.get(Integer.min(person.getAge(), deathProbability.size() - 1));
         return Float.parseFloat(row[rowIndex]);
     }
 
