@@ -9,14 +9,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
-public class CsvParser {
+public class DeathCalculator {
 
-    private static final CsvParser calculator = new CsvParser();
+    private static final DeathCalculator calculator = new DeathCalculator();
 
     private List<String[]> deathProbability;
     private List<String[]> casualties;
 
-    private CsvParser() {
+    private DeathCalculator() {
         try (
                 CSVReader deathProbabilityReader = new CSVReader(new FileReader(Objects.requireNonNull(
                         this.getClass().getClassLoader().getResource("death_probability.csv")).getPath()));
@@ -30,7 +30,7 @@ public class CsvParser {
         }
     }
 
-    public static CsvParser getInstance() {
+    public static DeathCalculator getInstance() {
         return calculator;
     }
 

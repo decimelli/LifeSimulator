@@ -2,7 +2,7 @@ package com.decimelli;
 
 import com.decimelli.exception.LifeException;
 import com.decimelli.utils.Console;
-import com.decimelli.utils.CsvParser;
+import com.decimelli.utils.DeathCalculator;
 import com.decimelli.utils.RandomGenerator;
 
 import java.util.Arrays;
@@ -77,11 +77,11 @@ public class Individual implements Runnable {
             Map<String, Long> indexes = calculateIndexes(this.currentDateInMillis - this.birthday.getTimeInMillis());
             this.age = Math.toIntExact(indexes.get("year"));
             Console.getPrinter().info("{0} has now been alive for {1}", this.firstname, getTimeString(indexes));
-            float chanceOfDeath = CsvParser.getInstance().getDeathProbability(this);
+            float chanceOfDeath = DeathCalculator.getInstance().getDeathProbability(this);
             this.dead = RandomGenerator.testChance(chanceOfDeath);
         }
         this.deathDate = this.currentDateInMillis;
-        this.causeOfDeath = CsvParser.getInstance().getDeathCause(this);
+        this.causeOfDeath = DeathCalculator.getInstance().getDeathCause(this);
         Console.getPrinter().info(
                 "Oh no! {0} {1} has has died on {2} at the age of {3} due to {4}.",
                 this.firstname, this.lastname, Console.getPrinter().prettyDate(this.currentDateInMillis),
